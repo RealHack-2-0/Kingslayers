@@ -1,6 +1,7 @@
 <?php 
 
 include_once("header.php");
+include_once("bad_words.php");
 
 $error_msg = "";
 if(isset($_GET['error'])){
@@ -20,10 +21,14 @@ if(isset($_POST['add_qn'])){
     $heading=$_POST['heading'];
     $content=$_POST['content'];
     $user_id=$_SESSION['user_id'];
-
     $time = date('Y-m-d H:i:s');
-    $query = "INSERT INTO tbl_questions (`user_id`,`heading`,`content`,`upvote`,`downvote`,`marked`,`time`) VALUES('$user_id','$heading','$content','0','0','0','$time')";
-    $results = mysqli_query($db,$query);
+
+    if (check_badwords($content)=='abused_failed_123' || check_badwords($heading)=='abused_failed_123'){
+        echo '<script>alert("Offensive words found! Unable to post your question.")</script>';
+    } else {
+        $query = "INSERT INTO tbl_questions (`user_id`,`heading`,`content`,`upvote`,`downvote`,`marked`,`time`) VALUES('$user_id','$heading','$content','0','0','0','$time')";
+        $results = mysqli_query($db,$query);
+    }
       
 }
 

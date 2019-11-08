@@ -74,8 +74,8 @@ session_start();
         <?php } else {?>
           <ul class="navbar-nav"  style="padding-right:10px;">
           <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="badge badge-pill badge-danger count" style="border-radius:10px;"></span> <i class="fa fa-bell" style="font-size:18px"></i></a>
-              <ul class="dropdown-menu" id="dropdown_menu"></ul>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="badge badge-pill badge-danger count" id="count" style="border-radius:10px;"></span> <i class="fa fa-bell" style="font-size:18px"></i></a>
+              <ul style="width:200px;" class="dropdown-menu" id="dropdown_menu"></ul>
             </li>
           </ul>
           <span style="padding-right:10px;"><?php echo $_SESSION['username']; ?></span>

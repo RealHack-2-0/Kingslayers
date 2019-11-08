@@ -30,7 +30,7 @@ if(isset($_GET['success'])){
     <section class="questions" style="margin-top:50px;">
         <div class="container">
             <?php 
-            $sql = "SELECT * FROM tbl_questions ORDER BY `qn_id` DESC";
+            $sql = "SELECT * FROM tbl_questions NATURAL JOIN tbl_users ORDER BY `qn_id` DESC";
             $result = mysqli_query($db, $sql);
             while($row = mysqli_fetch_assoc($result)){
             ?>
@@ -39,19 +39,53 @@ if(isset($_GET['success'])){
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-1">
-                                <div class="vote">
-                                    <button class="increment up">Up</button>
-                                    <button class="increment down">Down</button>
-                                    <?php $votes = $row['upvote'] - $row['downvote'];?>
-                                    <div class="count"><?php echo $votes; ?></div>
+                                <div class="vote text-center">
+                                    <?php
+                                    $votes = $row['upvote'] - $row['downvote'];
+                                    $qn_id = $row['qn_id'];
+                                    $user_id = $_SESSION['user_id'];
+                                    $sql_vote = "SELECT * FROM tbl_marked_questions WHERE `qn_id`='$qn_id' AND `user_id`='$user_id'";
+                                    $result_vote = mysqli_query($db, $sql_vote);
+                                    if($row['user_id']!=$user_id){
+                                        
+                                    ?>
+
+                                    <a href="add_vote.php?vote=up&qn_id=<?php echo $row['qn_id'];?>" class="increment up btn btn-success 
+                                        <?php if(mysqli_num_rows($result_vote)>0){
+                                            $row_vote = mysqli_fetch_assoc($result_vote);
+                                            if($row_vote['vote']=='up'){ echo 'disabled'; }
+                                            }
+                                            ?>" style="padding:5px;"><i class="fas fa-arrow-up"></i></a>
+                                    <a href="add_vote.php?vote=down&qn_id=<?php echo $row['qn_id'];?>" class="increment down btn btn-danger
+                                        <?php if(mysqli_num_rows($result_vote)>0){
+                                            $row_vote = mysqli_fetch_assoc($result_vote);
+                                            if($row_vote['vote']=='down'){ echo 'disabled'; }
+                                            }
+                                            ?>" style="padding:5px;"><i class="fas fa-arrow-down"></i></a>
+                                    
+                                    <?php } ?>
+
+                                    <div class="count text-center" style="font-weight:bold; font-size:18px; background:#e6e4e1; margin-top:5px; border-radius:5px;"><?php echo $votes; ?></div>
+                                    
                                 </div>
                             </div>
                             <div class="col-sm-10">
-                                <a href="<?php echo 'view_question.php?qn_id='.$row['qn_id']?>"><h5 class="card-title"><?php echo $row['heading']?></h5></a>
+                                <a href="<?php echo 'view_question.php?qn_id='.$row['qn_id'];?>"><h5 class="card-title"><?php echo $row['heading']?></h5></a>
                                 <p class="card-text"><?php echo $row['content']?></p>
+                                <p class="card-text" style="font-size:10px;"><?php echo 'Posted by '.$row['username']?></p>
+                                <p class="card-text" style="font-size:10px;"><?php echo '@ '.$row['time']?></p>
                             </div>
                             <div class="col-sm-1">
-                                <div class="vote roundrect">
+                                <div>
+                                    <?php 
+                                    if($row['marked']==0){
+                                        if($row['user_id']==$_SESSION['user_id']){?>
+                                            <a href="mark_answered.php?qn_id=<?php echo $row['qn_id'];?>" class="btn btn-danger mark_answered">Mark</a>
+                                    <?php 
+                                        }}
+                                    else { ?>
+                                        <span style='font-weight:bold;font-size:25px;color:green;'>&#10003;</span>
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>
@@ -64,10 +98,10 @@ if(isset($_GET['success'])){
 
 
   <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script> -->
 
-  <script>
+  <!-- <script>
   
   $(function(){
   $(".increment").click(function(){
@@ -103,7 +137,12 @@ if(isset($_GET['success'])){
   });
 });
 
-  </script>
+  </script> -->
+
+
+<?php include 'footer.php'; ?>
+
+
 
 </body>
 

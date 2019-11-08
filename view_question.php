@@ -88,95 +88,39 @@ $qn_id = $_GET['qn_id'];
     </section>
 
 
-    
-
-  <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-  <script>
-    jQuery(document).ready(function(){
-        
-        var qn_id = <?php echo $qn_id?>;
-
-        jQuery("#add_ans").on('click',function(){
-                
-            var answer_content = $.trim($(".answer_content").val());
-            if(answer_content!=''){
-                $.ajax({
-                    url:'add_answer.php',
-                    data:'ans_content=' + answer_content + '&qn_id=' + qn_id,
-                    success:function(msg){
-                        if(msg=='success'){
-                            load_unseen_notification();
-                            location.reload();
-                        } else {
-                            alert('Unable to post answer!');
-                        }
-                    }
-                });
-            }else{
-                alert('Enter an answer to post!')
-            }
-        });
-
-
-        // updating the view with notifications using ajax
-    //     function load_unseen_notification(view = '')
-    //     {
-    //         $.ajax({
-    //         url:"fetch.php",
-    //         method:"POST",
-    //         data:{view:view},
-    //         dataType:"json",
-    //         success:function(data)
-    //         {
-    //         $('.dropdown-menu').html(data.notification);
-    //         if(data.unseen_notification > 0)
-    //             {
-    //                 $('.count').html(data.unseen_notification);
-    //             }
-    //         }
-    //     });
-    //     }
-
-    //     load_unseen_notification();
-
-    //     // load new notifications
-    //     $(document).on('click', '.dropdown-toggle', function(){
-    //     $('.count').html('');
-    //     load_unseen_notification('yes');
-    //     });
-        
-    //     setInterval(function(){
-    //     load_unseen_notification();;
-    //     }, 5000);
-        
-    // });
-
-    function loadDoc() {
+    <div class="toast" data-delay="5000" style="background:#ffebcc;">
   
+  <div class="toast-body" style="color:red;">
+    Someone submitted an answer just now!
+  </div>
+</div>
 
-    setInterval(function(){
+  <?php include 'footer.php'; ?>
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-         document.getElementById("dropdown_menu").innerHTML = this.responseText;
-        //  alert(this.responseText);
+<script>
+
+var old_count = 0;
+var qn_id = <?php echo $qn_id; ?>
+
+$("#answer_content").keyup(function(){
+// setInterval(function(){
+    $.ajax({
+        type : "POST",
+        data:{qn_id:qn_id},
+        url : "just_now_answer.php",
+        success : function(data){
+            // if (data >= old_count) {
+                if(data=='yes'){
+                    $('.toast').toast('show');
+            //   alert('Someone submitted an answer just now!');
+            //   old_count = data;
+            }
         }
-    };
-    xhttp.open("GET", "data.php?qn_id=<?php echo $qn_id; ?>", true);
-    xhttp.send();
-
-    },1000);
-
-
-    }
-    loadDoc();
-  });
-
+    });
+// },1000);
+});
 </script>
+
 
 
 </body>

@@ -1,9 +1,10 @@
 <?php 
 include 'db_config.php';
+session_start();
 
-$qn_id = $_GET['qn_id'];
+$user_id = $_SESSION['user_id'];
 
-$sql = "SELECT * FROM tbl_answers WHERE `status`='0' AND `qn_id`='$qn_id' ORDER BY ans_id DESC";
+$sql = "SELECT * FROM tbl_answers INNER JOIN tbl_questions using (qn_id) WHERE tbl_answers.status='0' AND tbl_questions.user_id='$user_id' ORDER BY tbl_answers.ans_id DESC";
 $result = $db->query($sql);
 
 // echo $result->num_rows;
@@ -16,7 +17,7 @@ if ($result->num_rows > 0) {
         $output .= '
         <li style="padding:0 10px;">
         <a href="#">
-        <small><em>'.$row["answer"].'</em></small>
+        <small><em>New Answer for "'.$row["heading"].'"</em></small>
         </a>
         </li>
         ';
@@ -28,12 +29,12 @@ if ($result->num_rows > 0) {
     $output .= '<li style="padding:0 10px;"><a class="text-bold text-italic">No Notifications Found</a></li>';
 }
 
-echo $output;
-// $count = $result->num_rows;
-// $data = array(
-//    'notification' => $output,
-//    'unseen_notification'  => $count
-// );
+// echo $output;
+$count = $result->num_rows;
+$data = array(
+   'notification' => $output,
+   'unseen_notification'  => $count
+);
 
-// echo json_encode($data);
+echo json_encode($data);
 ?>
